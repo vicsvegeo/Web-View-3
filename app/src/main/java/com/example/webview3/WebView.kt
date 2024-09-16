@@ -66,6 +66,7 @@ fun WebViewScreen() {
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
+                    canGoBack = webView.canGoBack()
                 }
             }
             loadUrl("https://psbattles.fandom.com/wiki/Tiering_System")
@@ -95,9 +96,6 @@ fun WebViewScreen() {
 
     AndroidView(
         modifier = Modifier.fillMaxSize(),
-        factory = { webView },
-        update = {
-            canGoBack = webView.canGoBack()
-        }
+        factory = { webView }
     )
 }
