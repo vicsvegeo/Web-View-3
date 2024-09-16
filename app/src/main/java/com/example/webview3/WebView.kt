@@ -24,7 +24,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 @Composable
 fun WebViewScreen() {
     val context = LocalContext.current
-    val webViewState = remember { mutableStateOf(WebView(context)) }
+    val webView = remember { WebView(context) }
     var showAlert by remember {
         mutableStateOf(false)
     }
@@ -35,9 +35,13 @@ fun WebViewScreen() {
         mutableStateOf("")
     }
 
+    var canGoBack by remember {
+        mutableStateOf(false)
+    }
+
     // Enable JavaScript and other settings
     LaunchedEffect(Unit) {
-        webViewState.value.apply {
+        webView.apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
             webViewClient = object : WebViewClient() {
@@ -64,7 +68,7 @@ fun WebViewScreen() {
                 override fun onPageFinished(view: WebView?, url: String?) {
                 }
             }
-            loadUrl("https://youtube.com")
+            loadUrl("https://psbattles.fandom.com/wiki/Tiering_System")
         }
     }
     if (showAlert) {
@@ -79,21 +83,20 @@ fun WebViewScreen() {
             text = { Text(text = errorText) })
     }
     // Handle back button press
-    var canGoBack by remember { mutableStateOf(false) }
     BackHandler(enabled = canGoBack) {
-        webViewState.value.goBack()
+        webView.goBack()
     }
 
     DisposableEffect(Unit) {
         onDispose {
-            webViewState.value.destroy()
+            webView.destroy()
         }
     }
 
     AndroidView(
         modifier = Modifier.fillMaxSize(),
-        factory = { webViewState.value },
-        update = { webView ->
+        factory = { webView },
+        update = {
             canGoBack = webView.canGoBack()
         }
     )

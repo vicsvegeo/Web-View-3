@@ -29,12 +29,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        AudienceNetworkAds.initialize(this)
+        //AudienceNetworkAds.initialize(this)
         //MobileAds.initialize(this);
-        AppsFlyerLib.getInstance().init(AF_DEV_KEY, null, this);
-        AppsFlyerLib.getInstance().start(this);
-        OneSignal.initWithContext(this);
-        OneSignal.setAppId(ONESIGNAL_APP_ID);
+        //AppsFlyerLib.getInstance().init(AF_DEV_KEY, null, this);
+        //AppsFlyerLib.getInstance().start(this);
+        //OneSignal.initWithContext(this);
+        //OneSignal.setAppId(ONESIGNAL_APP_ID);
         enableEdgeToEdge()
         setContent {
             WebView3Theme {
