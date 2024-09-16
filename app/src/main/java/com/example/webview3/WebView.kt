@@ -50,9 +50,21 @@ fun WebViewScreen() {
                     request: WebResourceRequest,
                     error: WebResourceError
                 ) {
-                    showAlert = true
-                    errorName = "Error code ${error.errorCode}"
-                    errorText = error.description.toString()
+                    if (error.errorCode ==
+                        ERROR_UNSUPPORTED_AUTH_SCHEME ||
+                        error.errorCode == ERROR_AUTHENTICATION ||
+                        error.errorCode == ERROR_FILE ||
+                        error.errorCode == ERROR_FILE_NOT_FOUND ||
+                        error.errorCode == ERROR_HOST_LOOKUP ||
+                        error.errorCode == ERROR_TIMEOUT ||
+                        error.errorCode == -1
+                    ) {
+                    } else {
+                        showAlert = true
+                        errorName = "Error code ${error.errorCode}"
+                        errorText = error.description.toString()
+                    }
+
                 }
 
                 override fun onReceivedHttpError(
@@ -60,9 +72,14 @@ fun WebViewScreen() {
                     request: WebResourceRequest,
                     errorResponse: WebResourceResponse
                 ) {
-                    showAlert = true
-                    errorName = "Error code ${errorResponse.statusCode}"
-                    errorText = errorResponse.responseHeaders.toString()
+                    if ((errorResponse.statusCode >= 500 || errorResponse.statusCode >= 404)
+                        && errorResponse.statusCode != 451 &&
+                        errorResponse.statusCode != 408 && errorResponse.statusCode != 429
+                    ) {
+                        showAlert = true
+                        errorName = "Error code ${errorResponse.statusCode}"
+                        errorText = errorResponse.responseHeaders.toString()
+                    }
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
