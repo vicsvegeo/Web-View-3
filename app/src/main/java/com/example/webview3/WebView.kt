@@ -21,6 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 
+import android.webkit.WebSettings
+
+
+
 @Composable
 fun WebViewScreen() {
     val context = LocalContext.current
@@ -41,30 +45,22 @@ fun WebViewScreen() {
 
     // Enable JavaScript and other settings
     LaunchedEffect(Unit) {
+
         webView.apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
+            settings.cacheMode = WebSettings.LOAD_DEFAULT
+
+
             webViewClient = object : WebViewClient() {
                 override fun onReceivedError(
                     view: WebView,
                     request: WebResourceRequest,
                     error: WebResourceError
                 ) {
-                    if (error.errorCode ==
-                        ERROR_UNSUPPORTED_AUTH_SCHEME ||
-                        error.errorCode == ERROR_AUTHENTICATION ||
-                        error.errorCode == ERROR_FILE ||
-                        error.errorCode == ERROR_FILE_NOT_FOUND ||
-                        error.errorCode == ERROR_HOST_LOOKUP ||
-                        error.errorCode == ERROR_TIMEOUT ||
-                        error.errorCode == -1
-                    ) {
-                    } else {
-                        showAlert = true
-                        errorName = "Error code ${error.errorCode}"
-                        errorText = error.description.toString()
-                    }
-
+                    showAlert = true
+                    errorName = "Error code ${error.errorCode}"
+                    errorText = error.description.toString()
                 }
 
                 override fun onReceivedHttpError(
@@ -72,18 +68,12 @@ fun WebViewScreen() {
                     request: WebResourceRequest,
                     errorResponse: WebResourceResponse
                 ) {
-                    if ((errorResponse.statusCode >= 500 || errorResponse.statusCode >= 404)
-                        && errorResponse.statusCode != 451 &&
-                        errorResponse.statusCode != 408 && errorResponse.statusCode != 429
-                    ) {
-                        showAlert = true
-                        errorName = "Error code ${errorResponse.statusCode}"
-                        errorText = errorResponse.responseHeaders.toString()
-                    }
+                    showAlert = true
+                    errorName = "Error code ${errorResponse.statusCode}"
+                    errorText = errorResponse.responseHeaders.toString()
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
-                    canGoBack = webView.canGoBack()
                 }
             }
             loadUrl("https://psbattles.fandom.com/wiki/Tiering_System")
@@ -113,6 +103,9 @@ fun WebViewScreen() {
 
     AndroidView(
         modifier = Modifier.fillMaxSize(),
-        factory = { webView }
+        factory = { webView },
+        update = {
+            canGoBack = webView.canGoBack()
+        }
     )
 }
